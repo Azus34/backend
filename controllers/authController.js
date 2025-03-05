@@ -81,7 +81,7 @@ const loginUser = async (req, res) => {
     const token = jwt.sign({ userId: userDoc.id }, 'secretKey', { expiresIn: '10m' });
 
     // Devolver el token y el ID del usuario
-    res.status(200).json({ token, userId: userDoc.id, username: user.username});
+    res.status(200).json({ token, userId: userDoc.id, username: user.username, rol: user.rol});
   } catch (error) {
     console.error(error);
     res.status(500).json({ message: 'Error en el servidor' });
