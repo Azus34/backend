@@ -244,6 +244,39 @@ const getUsers = async (req, res) => {
   }
 };
 
+const updateUser = async (req, res) => {
+  const { userId } = req.params;
+  const { username, email, password, rol } = req.body;
+
+  try {
+    if (!userId || !username || !email || !rol) {
+      return res.status(400).json({ message: 'Faltan parámetros requeridos' });
+    }
+
+    const userRef = db.collection('USERS').doc(userId);
+    const userDoc = await userRef.get();
+
+    if (!userDoc.exists) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    }
+
+    const updatedData = { username, email, rol };
+
+    // Si se proporciona una nueva contraseña, la encriptamos antes de actualizar
+    if (password) {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      updatedData.password = hashedPassword;
+    }
+
+    await userRef.update(updatedData);
+
+    res.status(200).json({ message: 'Usuario actualizado correctamente' });
+  } catch (error) {
+    console.error('Error al actualizar usuario:', error);
+    res.status(500).json({ message: 'Error en el servidor', error: error.message });
+  }
+};
+
 const getGroupsByUser = async (req, res) => {
   const { userId } = req.params;
 
