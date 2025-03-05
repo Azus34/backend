@@ -469,4 +469,5 @@ module.exports = {
   getGroupsByUser,
   getUsers,
   getGroupTasks,
+  updateUser,
 };
