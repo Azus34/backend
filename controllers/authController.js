@@ -227,6 +227,8 @@ const getUsers = async (req, res) => {
         users.push({
           id: doc.id,
           username: data.username,
+          email: data.email,
+          rol: data.rol,
         });
       }
     });
