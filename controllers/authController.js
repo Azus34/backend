@@ -290,18 +290,19 @@ const getGroupsByUser = async (req, res) => {
         id: doc.id,
         name: doc.data().name,
         ownerId: doc.data().ownerId,
+        members: doc.data().members || [], 
       });
     });
 
     // Consulta los grupos donde el usuario es un miembro
     const memberSnapshot = await db.collection('GROUPS').where('members', 'array-contains', userId).get();
     memberSnapshot.forEach((doc) => {
-      // Evitar duplicados si el usuario es dueño y miembro
       if (!groups.some(group => group.id === doc.id)) {
         groups.push({
           id: doc.id,
           name: doc.data().name,
           ownerId: doc.data().ownerId,
+          members: doc.data().members || [], 
         });
       }
     });
@@ -316,7 +317,6 @@ const getGroupsByUser = async (req, res) => {
     res.status(500).json({ message: 'Error en el servidor' });
   }
 };
-
 
 const deleteTask = async (req, res) => {
   const { taskId } = req.params;
