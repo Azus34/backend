@@ -428,6 +428,32 @@ const addMemberToGroup = async (req, res) => {
   }
 };
 
+const removeMemberFromGroup = async (req, res) => {
+  const { groupId, userId } = req.params;
+
+  try {
+    const groupRef = db.collection('GROUPS').doc(groupId);
+    const groupDoc = await groupRef.get();
+
+    if (!groupDoc.exists) {
+      return res.status(404).json({ message: 'Grupo no encontrado' });
+    }
+
+    const groupData = groupDoc.data();
+    const members = groupData.members || [];
+
+    if (members.includes(userId)) {
+      const updatedMembers = members.filter((memberId) => memberId !== userId);
+      await groupRef.update({ members: updatedMembers });
+    }
+
+    res.status(200).json({ message: 'Miembro eliminado del grupo' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error al eliminar miembro del grupo' });
+  }
+};
+
 // Obtener tareas de un grupo
 const getGroupTasks = async (req, res) => {
   const { groupId } = req.params;
@@ -470,4 +496,5 @@ module.exports = {
   getUsers,
   getGroupTasks,
   updateUser,
+  removeMemberFromGroup,
 };
